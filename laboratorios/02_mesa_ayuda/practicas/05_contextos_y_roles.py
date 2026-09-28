@@ -21,19 +21,24 @@ def iniciar_sesion(context, usuario, contrasena):
 with sync_playwright() as playwright:
     browser = playwright.chromium.launch(headless=HEADLESS)
 
-    # TODO 1: cree dos BrowserContext independientes.
-    contexto_solicitante = None
-    contexto_agente = None
+    contexto_solicitante = browser.new_context()
+    contexto_agente = browser.new_context()
+    pagina_solicitante = iniciar_sesion(contexto_solicitante, "maria.solicitante", "rpa123")
+    pagina_agente = iniciar_sesion(contexto_agente, "ana.agente", "soporte123")
 
-    # TODO 2: inicie sesión como maria.solicitante / rpa123 en el primer contexto.
-    pagina_solicitante = None
+    for pagina, rol_esperado, cantidad_esperada in (
+        (pagina_solicitante, "Solicitante", 2),
+        (pagina_agente, "Agente", 3),
+    ):
+        rol = pagina.get_by_test_id("session-role").inner_text()
+        cantidad = pagina.locator("[data-ticket-id]").count()
+        assert (rol, cantidad) == (rol_esperado, cantidad_esperada)
+        print(f"{rol}: {cantidad} tickets visibles")
+        pagina.get_by_role("button", name="Abrir INC-1001").click()
+        assert pagina.get_by_test_id("ticket-detail").is_visible()
 
-    # TODO 3: inicie sesión como ana.agente / soporte123 en el segundo contexto.
-    pagina_agente = None
-
-    # TODO 4: imprima el rol y el número de tickets visibles en cada página.
-
-    # TODO 5: abra INC-1001 en ambas páginas y compruebe que las herramientas del
-    # agente solamente sean visibles en pagina_agente.
+    assert not pagina_solicitante.get_by_role("heading", name="Herramientas del agente").is_visible()
+    assert pagina_agente.get_by_role("heading", name="Herramientas del agente").is_visible()
+    print("INC-1001 visible en ambos contextos; herramientas disponibles solo para Agente.")
 
     browser.close()

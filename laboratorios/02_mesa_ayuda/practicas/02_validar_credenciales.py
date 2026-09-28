@@ -11,14 +11,12 @@ with sync_playwright() as playwright:
     page = browser.new_page()
     page.goto(PORTAL)
 
-    # TODO 1: escriba maria.solicitante como usuario y una contraseña incorrecta.
-
-    # TODO 2: pulse Iniciar sesión.
-
-    # TODO 3: localice el mensaje con role="alert" e imprima su texto.
-    # Las credenciales rechazadas son un resultado previsto del proceso, no una falla
-    # de Playwright ni una excepción técnica.
-
-    # TODO 4: confirme que la URL sigue siendo login.html.
+    page.get_by_label("Usuario").fill("maria.solicitante")
+    page.get_by_label("Contraseña").fill("contraseña_incorrecta")
+    page.get_by_role("button", name="Iniciar sesión").click()
+    alerta = page.get_by_role("alert")
+    assert alerta.is_visible()
+    print("Resultado esperado:", alerta.inner_text())
+    assert page.url.endswith("/login.html"), page.url
 
     browser.close()

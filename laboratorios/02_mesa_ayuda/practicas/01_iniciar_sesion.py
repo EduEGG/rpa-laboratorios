@@ -13,16 +13,12 @@ with sync_playwright() as playwright:
     page = browser.new_page()
     page.goto(PORTAL)
 
-    # TODO 1: localice el campo Usuario mediante su etiqueta y escriba USUARIO.
-    # fill() reemplaza cualquier contenido previo del campo.
-
-    # TODO 2: complete el campo Contraseña sin utilizar selectores CSS.
-
-    # TODO 3: pulse el botón Iniciar sesión mediante su rol y nombre accesible.
-
-    # TODO 4: compruebe que el encabezado Panel de tickets sea visible.
-    # La navegación se espera automáticamente porque la acción anterior la provoca.
-
-    # TODO 5: obtenga el texto de data-testid="session-role" e imprímalo.
+    page.get_by_label("Usuario").fill(USUARIO)
+    page.get_by_label("Contraseña").fill(CONTRASENA)
+    page.get_by_role("button", name="Iniciar sesión").click()
+    assert page.get_by_role("heading", name="Panel de tickets").is_visible()
+    rol = page.get_by_test_id("session-role").inner_text()
+    assert rol == "Solicitante"
+    print("Perfil autenticado:", rol)
 
     browser.close()

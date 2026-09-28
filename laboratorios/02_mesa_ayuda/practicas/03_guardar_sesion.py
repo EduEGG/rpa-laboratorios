@@ -21,10 +21,9 @@ with sync_playwright() as playwright:
     page.get_by_role("button", name="Iniciar sesión").click()
     page.get_by_role("heading", name="Panel de tickets").wait_for()
 
-    # TODO 1: use context.storage_state(path=ESTADO) para guardar la sesión.
-    # El estado puede contener cookies y almacenamiento local; por ello .auth/ está
-    # excluida del repositorio mediante .gitignore.
+    context.storage_state(path=ESTADO)
 
     browser.close()
 
-# TODO 2: compruebe que ESTADO existe e imprima su ruta y tamaño.
+assert ESTADO.is_file(), "No se guardó el estado de la sesión."
+print(f"Estado guardado: {ESTADO} ({ESTADO.stat().st_size} bytes)")

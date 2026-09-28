@@ -6,3 +6,4 @@ __pycache__/
 !.auth/.gitkeep
 evidencias/*
 !evidencias/.gitkeep
+!evidencias/INC-1001-actualizado.png

@@ -15,16 +15,17 @@ if not ESTADO.exists():
 with sync_playwright() as playwright:
     browser = playwright.chromium.launch(headless=HEADLESS)
 
-    # TODO 1: cree un contexto nuevo con storage_state=ESTADO.
-    context = None
-
-    # TODO 2: cree una página dentro del contexto y visite DASHBOARD directamente.
-    page = None
-
-    # TODO 3: compruebe que el perfil visible sea Solicitante.
-
-    # TODO 4: cuente los artículos de ticket mediante data-ticket-id.
-
-    # TODO 5: cierre la sesión y compruebe el regreso a login.html.
+    context = browser.new_context(storage_state=ESTADO)
+    page = context.new_page()
+    page.goto(DASHBOARD)
+    rol = page.get_by_test_id("session-role")
+    assert rol.inner_text() == "Solicitante"
+    cantidad = page.locator("[data-ticket-id]").count()
+    assert cantidad == 2, f"Se esperaban dos tickets; se encontraron {cantidad}."
+    print(f"Sesión restaurada: {rol.inner_text()} ({cantidad} tickets visibles)")
+    page.get_by_role("button", name="Cerrar sesión").click()
+    page.wait_for_url("**/login.html")
+    assert page.get_by_role("heading", name="Iniciar sesión").is_visible()
+    print("Cierre de sesión confirmado.")
 
     browser.close()

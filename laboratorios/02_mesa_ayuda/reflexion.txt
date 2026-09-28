@@ -1,17 +1,22 @@
-Nombre:
-Fecha:
+Nombre: Eduardo Emiliano Gómez Fernández
+Fecha: 27 de septiembre de 2026
 
 1. ¿Qué diferencia existe entre Browser, BrowserContext y Page?
 
+Browser es el navegador que abre Playwright. BrowserContext es como un perfil independiente dentro de ese navegador: guarda su propia sesión y sus cookies. Page es una pestaña dentro del contexto.
 
 2. ¿Por qué dos páginas abiertas en contextos diferentes pueden mantener usuarios distintos?
 
+Porque cada contexto tiene su propio almacenamiento. Así puedo tener a María como solicitante en uno y a Ana como agente en otro, aunque los dos estén en el mismo navegador.
 
 3. ¿Qué información puede contener un archivo creado con storage_state() y por qué no debe publicarse?
 
+Puede guardar cookies y almacenamiento local, donde puede existir información que permita recuperar una sesión iniciada. Por eso, si fuera un sistema real, alguien podría usar ese archivo para entrar como ese usuario. En esta práctica queda dentro de .auth/ y no se sube a GitHub.
 
 4. ¿Por qué las credenciales incorrectas son una excepción de negocio y no un error técnico?
 
+Porque el sistema sí funcionó: recibió los datos, revisó las credenciales y rechazó el acceso como debía. Un error técnico sería que no cargara el servidor, que no abriera Chromium o que fallara un selector del script.
 
 5. ¿Qué cambiaría para procesar tickets con tres perfiles distintos?
 
+Crearía un tercer contexto y abriría ahí otra página para iniciar sesión con el tercer perfil. Luego comprobaría por separado qué tickets puede ver y qué acciones tiene permitidas, sin mezclar sus sesiones con las de los otros dos usuarios.
